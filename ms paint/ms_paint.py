@@ -6,8 +6,11 @@ class Paint:
     def __init__(self,width,height,color):
         #screen 
         self.screen=Tk()
-        self.screen.title("Paint")
+        self.screen.title("Soban's Paint")
         self.screen.geometry(str(width)+'x'+str(height))
+        if width > 1300 and height > 700:
+            self.width,self.height=width,height
+            Canvas(self.screen,width=self.width,height=self.height,bg="lightblue").pack()
 
         #Selection area
         self.buttonarea=Canvas(self.screen,width=width,height=100,highlightbackground="black",highlightthickness=1)
@@ -21,8 +24,10 @@ class Paint:
         self.clear=Button(self.buttonarea,bitmap="error",bg="white",command=self.clearbutton)
         self.clear.place(x=5,y=70)
 
-        self.eraser=Button(self.buttonarea,bitmap="error",bg="white",command=self.eraser)
-        self.eraser.place(x=100,y=20)
+        self.picture=PhotoImage(file=r"D:\\th.PNG")
+        self.picture=self.picture.subsample(20,20)
+        self.eraser=Button(self.buttonarea,image=self.picture,bg="white",command=self.eraser)
+        self.eraser.place(x=150,y=20)
 
         #canvas bind
         self.canvas.bind("<B1-Motion>",self.brush)     
