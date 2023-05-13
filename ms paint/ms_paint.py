@@ -1,6 +1,7 @@
 
 from tkinter import *
 
+
 class Paint:
     def __init__(self,width,height,color):
         #screen 
@@ -21,27 +22,39 @@ class Paint:
         self.clear.place(x=5,y=70)
 
 
-        self.stroke_size=IntVar()
-        self.options=[1,2,3,4]    
-        self.size_list=OptionMenu(self.buttonarea,self.stroke_size,*self.options)
-        self.size_list.place(x=600,y=20)
-   
+        #Tools class Composed
+        self.obj_tools=Tools(self.canvas,self.buttonarea)
 
         self.pic=PhotoImage(file=r"D:\\brush.PNG")
         self.pic=self.pic.subsample(20,20)
-        self.brushbutton=Button(self.buttonarea,image=self.pic,bg="white",command=self.isbrushbuttonpressed)
+        self.brushbutton=Button(self.buttonarea,image=self.pic,bg="white",command=self.obj_tools.isbrushbuttonpressed)
         self.brushbutton.place(x=300,y=20)
 
         self.picture=PhotoImage(file=r"D:\\th.PNG")
         self.picture=self.picture.subsample(20,20)
-        self.eraserpress=Button(self.buttonarea,image=self.picture,bg="white",command=self.iseraserbuttonpressed)
+        self.eraserpress=Button(self.buttonarea,image=self.picture,bg="white",command=self.obj_tools.iseraserbuttonpressed)
         self.eraserpress.place(x=150,y=20)
-           
-        self.prev_x,self.prev_y=None,None
 
     def play(self):
         self.screen.mainloop()
-      
+                
+
+    def clearbutton(self):
+        self.canvas.delete("all")
+       
+class Tools:
+    def __init__(self,Area,Selection):
+
+        self.canvas=Area
+        self.buttonarea=Selection
+
+        self.stroke_size=IntVar()
+        self.options=[1,2,3,4]    
+        self.size_list=OptionMenu(self.buttonarea,self.stroke_size,*self.options)
+        self.size_list.place(x=600,y=20)
+
+        self.prev_x,self.prev_y=None,None
+
     def isbrushbuttonpressed(self):
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
@@ -78,10 +91,6 @@ class Paint:
 
         self.canvas.bind("<B1-Motion>",self.eraser)
         self.canvas.bind("<ButtonRelease-1>",self.eraserend)
-        
 
-    def clearbutton(self):
-        self.canvas.delete("all")
-       
 
 Paint(1300,700,"white").play()
