@@ -1,6 +1,6 @@
 
 from tkinter import *
-
+from tkinter import colorchooser
 
 class Paint:
     def __init__(self,width,height,color):
@@ -16,13 +16,22 @@ class Paint:
         #Canvas making
         self.canvas=Canvas(self.screen,width=width,height=height,bg=color)
         self.canvas.pack()
+    
+        #Tools class Composed
+        self.obj_tools=Tools(self.canvas,self.buttonarea)
 
         #Button making
         self.clear=Button(self.buttonarea,bitmap="error",bg="white",command=self.clearbutton)
         self.clear.place(x=5,y=70)
 
-        #Tools class Composed
-        self.obj_tools=Tools(self.canvas,self.buttonarea)
+        self.pict=PhotoImage(file=r"D:\\color.PNG")
+        self.pict=self.pict.subsample(15,10)
+        self.colorbutton=Button(self.buttonarea,image=self.pict,bg="white",command=self.obj_tools.changecolorbrush)
+        self.colorbutton.place(x=1000,y=20)
+
+        #self.color=Button(self.buttonarea,image=self.pict,text="color 2",bg="white",command=self.obj_tools.changecoloreraser)
+        #self.color.place(x=1100,y=20)
+
 
         self.pic=PhotoImage(file=r"D:\\brush.PNG")
         self.pic=self.pic.subsample(20,20)
@@ -46,7 +55,10 @@ class Tools:
 
         self.canvas=Area
         self.buttonarea=Selection
+        self.brushcolor="black"
+        self.erasercolor="white"
 
+        #Stroke size
         self.stroke_size=IntVar()
         self.options=[1,3,5,7]    
         self.size_list=OptionMenu(self.buttonarea,self.stroke_size,*self.options)
@@ -67,7 +79,7 @@ class Tools:
         if self.prev_x==None or self.prev_x==None:
             self.prev_x,self.prev_y=event.x,event.y
             return
-        self.canvas.create_line(self.prev_x,self.prev_y,event.x,event.y,width=self.stroke_size.get(),capstyle=ROUND,fill="black")
+        self.canvas.create_line(self.prev_x,self.prev_y,event.x,event.y,width=self.stroke_size.get(),capstyle=ROUND,fill=self.brushcolor)
         self.prev_x,self.prev_y=event.x,event.y
     
     def brushend(self,event):
@@ -77,7 +89,7 @@ class Tools:
         if self.prev_x==None or self.prev_x==None:
             self.prev_x,self.prev_y=event.x,event.y
             return
-        self.canvas.create_line(self.prev_x,self.prev_y,event.x,event.y,width=self.stroke_size.get(),fill="white")
+        self.canvas.create_line(self.prev_x,self.prev_y,event.x,event.y,width=self.stroke_size.get(),fill=self.erasercolor)
         self.prev_x,self.prev_y=event.x,event.y
 
     def eraserend(self,event):
@@ -90,6 +102,14 @@ class Tools:
 
         self.canvas.bind("<B1-Motion>",self.eraser)
         self.canvas.bind("<ButtonRelease-1>",self.eraserend)
+
+    def changecolorbrush(self):
+        selectcolor=colorchooser.askcolor()
+        self.brushcolor=selectcolor[1]
+   
+    def changecoloreraser(self):
+        selectcolor=colorchooser.askcolor()
+        self.erasercolor=selectcolor[1]
 
 
 Paint(1300,700,"white").play()
