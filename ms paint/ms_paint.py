@@ -21,7 +21,6 @@ class Paint:
         self.clear=Button(self.buttonarea,bitmap="error",bg="white",command=self.clearbutton)
         self.clear.place(x=5,y=70)
 
-
         #Tools class Composed
         self.obj_tools=Tools(self.canvas,self.buttonarea)
 
@@ -38,10 +37,10 @@ class Paint:
     def play(self):
         self.screen.mainloop()
                 
-
     def clearbutton(self):
         self.canvas.delete("all")
-       
+  
+        
 class Tools:
     def __init__(self,Area,Selection):
 
@@ -49,13 +48,14 @@ class Tools:
         self.buttonarea=Selection
 
         self.stroke_size=IntVar()
-        self.options=[1,2,3,4]    
+        self.options=[1,3,5,7]    
         self.size_list=OptionMenu(self.buttonarea,self.stroke_size,*self.options)
         self.size_list.place(x=600,y=20)
 
         self.prev_x,self.prev_y=None,None
 
     def isbrushbuttonpressed(self):
+        self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
 
@@ -63,19 +63,17 @@ class Tools:
         self.canvas.bind("<B1-Motion>",self.brush)     
         self.canvas.bind("<ButtonRelease-1>",self.brushend)
 
-    def brush(self,event):  
-        self.canvas["cursor"]="tcross"
+    def brush(self,event):          
         if self.prev_x==None or self.prev_x==None:
             self.prev_x,self.prev_y=event.x,event.y
             return
-        self.canvas.create_line(self.prev_x,self.prev_y,event.x,event.y,width=self.stroke_size.get(),capstyle='round',fill="black")
+        self.canvas.create_line(self.prev_x,self.prev_y,event.x,event.y,width=self.stroke_size.get(),capstyle=ROUND,fill="black")
         self.prev_x,self.prev_y=event.x,event.y
     
     def brushend(self,event):
         self.prev_x,self.prev_y=None,None
 
     def eraser(self,event):
-        self.canvas["cursor"]=DOTBOX
         if self.prev_x==None or self.prev_x==None:
             self.prev_x,self.prev_y=event.x,event.y
             return
@@ -86,6 +84,7 @@ class Tools:
          self.prev_x,self.prev_y=None,None
 
     def iseraserbuttonpressed(self):
+        self.canvas["cursor"]=DOTBOX
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
 
