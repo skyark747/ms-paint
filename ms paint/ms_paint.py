@@ -25,6 +25,9 @@ class Paint:
         #Tools class Composed
         self.obj_tools=Tools(self.canvas,self.buttonarea)
 
+        #Shapes class Composed
+        self.obj_shapes=Shapes(self.canvas,self.buttonarea,self.obj_tools)
+
         #Button making
         self.clear=Button(self.buttonarea,bitmap="error",bg="white",command=self.clearbutton)
         self.clear.place(x=5,y=70)
@@ -32,7 +35,7 @@ class Paint:
         self.straightlinepic=PhotoImage(file=r"D:\\straightline.PNG")
         self.straightlinepic=self.straightlinepic.subsample(x=20,y=20)
 
-        self.straightline=Button(self.buttonarea,image=self.straightlinepic,bg="lightblue",relief="groove")
+        self.straightline=Button(self.buttonarea,image=self.straightlinepic,bg="lightblue",relief="groove",command=self.obj_shapes.islinebuttonpressed)
         self.straightline.place(x=372,y=6)
 
         self.pict=PhotoImage(file=r"D:\\color.PNG")
@@ -108,8 +111,6 @@ class Paint:
         self.pic=self.pic.subsample(15,15)
         self.brushbutton=Button(self.buttonarea,image=self.pic,bg="white",command=self.obj_tools.isbrushbuttonpressed)
         self.brushbutton.place(x=300,y=6)
-        if self.obj_tools.isbrushbuttonpressed==True:
-            self.brushbutton["relief"]=SUNKEN
 
         self.picture=PhotoImage(file=r"D:\\th.PNG")
         self.picture=self.picture.subsample(20,20)
@@ -150,7 +151,7 @@ class Tools:
         #canvas bind
         self.canvas.bind("<B1-Motion>",self.brush)     
         self.canvas.bind("<ButtonRelease-1>",self.brushend)
-        return True
+        
     def brush(self,event):          
         if self.prev_x==None or self.prev_x==None:
             self.prev_x,self.prev_y=event.x,event.y
@@ -194,5 +195,38 @@ class Tools:
         selectcolor=colorchooser.askcolor()
         self.erasercolor=selectcolor[1]
     
+
+class Shapes:
+    def __init__(self,canvasarea,selectionarea,objects):
+        self.canvas=canvasarea
+        self.buttonarea=selectionarea
+        self.paintobjs=objects
+
+        self.prev_x,self.prev_y=None,None
+        self.last_x,self.last_y=None,None
+
+        self.shapeid=None
+
+    def straightline(self,event):
+        if self.shapeid is not None:
+            self.canvas.delete(self.shapeid)
+        if self.prev_x==None or self.prev_y==None:
+            self.prev_x,self.prev_y=event.x,event.y
+            return
+
+        self.shapeid=self.canvas.create_line(self.prev_x,self.prev_y,event.x,event.y,width=self.paintobjs.stroke_size.get(),fill=self.paintobjs.brushcolor.get())
+             
+    def islinebuttonpressed(self):
+        self.canvas.unbind("<B1-Motion>")     
+        self.canvas.unbind("<ButtonRelease-1>")
+
+        self.canvas.bind("<B1-Motion>",self.straightline)
+        self.canvas.bind("<ButtonRelease-1>",self.straightlineend)
+
+    def straightlineend(self,event):
+        self.prev_x,self.prev_y=None,None
+        self.shapeid=None
+
+
 
 Paint(1300,700,"white").play()
