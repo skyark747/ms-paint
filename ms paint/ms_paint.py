@@ -68,6 +68,12 @@ class Paint:
         self.triangleshape=Button(self.buttonarea,image=self.trianglepic,bg="lightblue",relief="groove",command=self.obj_shapes.istrianglebuttonpressed)
         self.triangleshape.place(x=378,y=40)
 
+        self.pentagonpic=PhotoImage(file=r"D:\\pentagon.PNG")
+        self.pentagonpic=self.pentagonpic.subsample(x=45,y=50)
+
+        self.pentagonshape=Button(self.buttonarea,image=self.pentagonpic,bg="lightblue",relief="groove",command=self.obj_shapes.ispentagonbuttonpressed)
+        self.pentagonshape.place(x=412,y=40)
+
 
         self.pict=PhotoImage(file=r"D:\\color.PNG")
         self.pict=self.pict.subsample(50,30)
@@ -247,9 +253,11 @@ class Shapes:
         self.paintobjs=objects
 
         self.prev_x,self.prev_y=None,None
-        self.last_x,self.last_y=None,None
-
+        
         self.shapeid=None
+        self.lastid=None
+        self.previd=None
+        self.newid=None
 
     def straightline(self,event):
         if self.shapeid is not None:
@@ -381,9 +389,54 @@ class Shapes:
         self.canvas.bind("<B1-Motion>",self.triangle)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
 
+    def pentagon(self,event):
+        if self.shapeid is not None:
+            self.canvas.delete(self.shapeid)
+            self.canvas.delete(self.lastid)
+            self.canvas.delete(self.newid)
+            self.canvas.delete(self.previd)
+
+        if self.prev_x==None or self.prev_y==None:
+            self.prev_x,self.prev_y=event.x,event.y
+            return
+        radius=abs(self.prev_x-event.x)+abs(self.prev_y-event.y)
+
+        x1=self.prev_x
+        y1=self.prev_y
+
+        x2=self.prev_x-radius/2
+        y2=self.prev_y-radius/2
+
+        x3=self.prev_x+radius/2
+        y3=self.prev_y+radius/2
+
+        x4=x1-radius/4
+        y4=y1+radius
+       
+        x5=x1+radius/4
+        y5=y1+radius
+
+        self.shapeid=self.canvas.create_polygon(x1,y1,x3,y3,x1,y1,x2,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+   
+        self.newid=self.canvas.create_polygon(x4,y4,x2,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        
+        self.previd=self.canvas.create_polygon(x5,y5,x3,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+
+        self.lastid=self.canvas.create_polygon(x5,y5,x4,y4,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+
+       
+    def ispentagonbuttonpressed(self):
+        self.canvas["cursor"]="tcross"
+        self.canvas.unbind("<B1-Motion>")     
+        self.canvas.unbind("<ButtonRelease-1>")
+
+        self.canvas.bind("<B1-Motion>",self.pentagon)
+        self.canvas.bind("<ButtonRelease-1>",self.shapeend)
+
     def shapeend(self,event):
         self.prev_x,self.prev_y=None,None
         self.shapeid=None
+        self.previd,self.newid,self.lastid=None,None,None
 
 
 Paint(1300,700,"white").play()
