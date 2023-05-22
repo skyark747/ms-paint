@@ -3,6 +3,9 @@ from asyncio.windows_events import NULL
 from cgitb import text
 from tkinter import *
 from tkinter import colorchooser
+from tkinter import filedialog
+import PIL
+from PIL import ImageGrab
 
 class Paint:
     def __init__(self,width,height,color):
@@ -15,18 +18,18 @@ class Paint:
         self.buttonarea=Canvas(self.screen,width=width,height=100,highlightbackground="black",highlightthickness=2)
         self.buttonarea.pack()
 
-        self.shapescanvas=Frame(self.buttonarea,width=180,height=99,bg="lightblue")
+        self.shapescanvas=Frame(self.buttonarea,width=180,height=99,bg="lightblue",highlightthickness=1,highlightbackground="black")
         self.shapescanvas.place(x=376,y=2)
 
-        self.colorcanvas=Frame(self.buttonarea,width=333,height=99,bg="mistyrose")
+        self.colorcanvas=Frame(self.buttonarea,width=333,height=99,bg="mistyrose",highlightthickness=1,highlightbackground="black")
         self.colorcanvas.place(x=800,y=2)
 
         #labels
         self.label=Label(self.buttonarea,text="Colors",width=5,bg="mistyrose")
-        self.label.place(x=950,y=80)
+        self.label.place(x=950,y=78)
 
         self.labelshape=Label(self.buttonarea,text="Shapes",width=5,bg="lightblue")
-        self.labelshape.place(x=440,y=80)
+        self.labelshape.place(x=440,y=78)
 
 
         #Canvas making
@@ -40,8 +43,11 @@ class Paint:
         self.obj_shapes=Shapes(self.canvas,self.buttonarea,self.obj_tools)
 
         #Button making
-        self.clear=Button(self.buttonarea,bitmap="error",bg="white",command=self.clearbutton)
-        self.clear.place(x=5,y=70)
+        self.clearpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\bin.PNG")
+        self.clearpic=self.clearpic.subsample(x=50,y=50)
+
+        self.clear=Button(self.buttonarea,image=self.clearpic,bg="white",command=self.clearbutton,relief="flat")
+        self.clear.place(x=5,y=72)
 
         self.straightlinepic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\straightline.PNG")
         self.straightlinepic=self.straightlinepic.subsample(x=20,y=20)
@@ -102,7 +108,6 @@ class Paint:
 
         self.rtrishape=Button(self.buttonarea,image=self.rtripic,bg="lightblue",relief="groove",command=self.obj_shapes.isrighttrianglebuttonpressed)
         self.rtrishape.place(x=520,y=40)
-
 
         self.pict=PhotoImage(file=r"D:\\ms paint\ms paint\pics\color.PNG")
         self.pict=self.pict.subsample(50,30)
@@ -191,10 +196,29 @@ class Paint:
         self.brushbutton=Button(self.buttonarea,image=self.pic,bg="white",command=self.obj_tools.isbrushbuttonpressed)
         self.brushbutton.place(x=300,y=6)
 
-        self.picture=PhotoImage(file=r"D:\\ms paint\ms paint\pics\th.PNG")
-        self.picture=self.picture.subsample(20,20)
-        self.eraserpress=Button(self.buttonarea,image=self.picture,bg="white",command=self.obj_tools.iseraserbuttonpressed)
-        self.eraserpress.place(x=150,y=20)
+        self.picture=PhotoImage(file=r"D:\\ms paint\ms paint\pics\eraser1.PNG")
+        self.picture=self.picture.subsample(8,8)
+        self.eraserpress=Button(self.buttonarea,image=self.picture,relief="flat",command=self.obj_tools.iseraserbuttonpressed)
+        self.eraserpress.place(x=150,y=53)
+
+        self.savepic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\save.PNG")
+        self.savepic=self.savepic.subsample(x=70,y=70)
+        self.save=Button(self.buttonarea,image=self.savepic,relief="flat",command=self.save)
+        self.save.place(x=3,y=2)
+
+        self.pencilpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\pencil1.PNG")
+        self.pencilpic=self.pencilpic.subsample(x=80,y=80)
+        self.pencil=Button(self.buttonarea,image=self.pencilpic,relief="flat",command=self.obj_tools.isbrushbuttonpressed)
+        self.pencil.place(x=150,y=15)
+
+    def save(self):
+        self.fileloc=filedialog.asksaveasfilename(defaultextension="PNG")
+        x=self.canvas.winfo_rootx()+100
+        y=self.canvas.winfo_rooty()+101
+
+        self.image=ImageGrab.grab(bbox=(x,y,x+1300,y+690))
+        self.image.save(self.fileloc)
+
 
     def play(self):
         self.screen.mainloop()
