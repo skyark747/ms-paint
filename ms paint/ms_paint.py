@@ -1,11 +1,12 @@
 
 from asyncio.windows_events import NULL
 from cgitb import text
+from email.mime import image
 from tkinter import *
 from tkinter import colorchooser
 from tkinter import filedialog
 import PIL
-from PIL import ImageGrab
+from PIL import ImageGrab,Image,ImageTk
 
 class Paint:
     def __init__(self,width,height,color):
@@ -18,15 +19,15 @@ class Paint:
         self.buttonarea=Canvas(self.screen,width=width,height=100,highlightbackground="black",highlightthickness=2)
         self.buttonarea.pack()
 
-        self.shapescanvas=Frame(self.buttonarea,width=180,height=99,bg="lightblue",highlightthickness=1,highlightbackground="black")
-        self.shapescanvas.place(x=376,y=2)
+        self.shapescanvas=Frame(self.buttonarea,width=182,height=100,bg="lightblue",highlightthickness=1,highlightbackground="black")
+        self.shapescanvas.place(x=374,y=2)
 
-        self.colorcanvas=Frame(self.buttonarea,width=333,height=99,bg="mistyrose",highlightthickness=1,highlightbackground="black")
-        self.colorcanvas.place(x=800,y=2)
+        self.colorcanvas=Frame(self.buttonarea,width=365,height=100,bg="mistyrose",highlightthickness=1,highlightbackground="black")
+        self.colorcanvas.place(x=765,y=2)
 
         #labels
         self.label=Label(self.buttonarea,text="Colors",width=5,bg="mistyrose")
-        self.label.place(x=950,y=78)
+        self.label.place(x=910,y=78)
 
         self.labelshape=Label(self.buttonarea,text="Shapes",width=5,bg="lightblue")
         self.labelshape.place(x=440,y=78)
@@ -46,7 +47,8 @@ class Paint:
         self.clearpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\bin.PNG")
         self.clearpic=self.clearpic.subsample(x=50,y=50)
 
-        self.clear=Button(self.buttonarea,image=self.clearpic,bg="white",command=self.clearbutton,relief="flat")
+       
+        self.clear=Button(self.buttonarea,image=self.clearpic,command=self.clearbutton,relief="flat")
         self.clear.place(x=5,y=72)
 
         self.straightlinepic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\straightline.PNG")
@@ -122,6 +124,7 @@ class Paint:
      
         self.cl0=Button(self.buttonarea,image=self.picred,bg="white",command=lambda:self.obj_tools.brushcolor.set("red"),relief="groove")
         self.cl0.place(x=840,y=20)
+        
 
         self.picdarkred=PhotoImage(file=r"D:\\ms paint\ms paint\pics\darkred.PNG")
         self.picdarkred=self.picdarkred.subsample(9,10)
@@ -197,7 +200,7 @@ class Paint:
         self.brushbutton.place(x=300,y=6)
 
         self.picture=PhotoImage(file=r"D:\\ms paint\ms paint\pics\eraser1.PNG")
-        self.picture=self.picture.subsample(8,8)
+        self.picture=self.picture.subsample(7,7)
         self.eraserpress=Button(self.buttonarea,image=self.picture,relief="flat",command=self.obj_tools.iseraserbuttonpressed)
         self.eraserpress.place(x=150,y=53)
 
@@ -206,19 +209,33 @@ class Paint:
         self.save=Button(self.buttonarea,image=self.savepic,relief="flat",command=self.save)
         self.save.place(x=3,y=2)
 
+        self.loadpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\upload.PNG")
+        self.loadpic=self.loadpic.subsample(x=25,y=25)
+       
+        self.load=Button(self.buttonarea,image=self.loadpic,relief="flat",command=self.loadimage)
+        self.load.place(x=3,y=35)
+
+
         self.pencilpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\pencil1.PNG")
-        self.pencilpic=self.pencilpic.subsample(x=80,y=80)
+        self.pencilpic=self.pencilpic.subsample(x=84,y=84)
         self.pencil=Button(self.buttonarea,image=self.pencilpic,relief="flat",command=self.obj_tools.isbrushbuttonpressed)
         self.pencil.place(x=150,y=15)
 
     def save(self):
-        self.fileloc=filedialog.asksaveasfilename(defaultextension="PNG")
+        self.fileloc=filedialog.asksaveasfilename(defaultextension="PNG",title="select file type",filetypes = (('JPEG', ('*.jpg','*.jpeg','*.jpe','*.jfif')),('PNG', '*.png'),('BMP', ('*.bmp','*.jdib')),('GIF', '*.gif')))
         x=self.canvas.winfo_rootx()+100
         y=self.canvas.winfo_rooty()+101
 
         self.image=ImageGrab.grab(bbox=(x,y,x+1300,y+690))
         self.image.save(self.fileloc)
 
+    def loadimage(self):
+        global pic
+        self.filename=filedialog.askopenfilename(title="select image",filetypes = (('JPEG', ('*.jpg','*.jpeg','*.jpe','*.jfif')),('PNG', '*.png'),('BMP', ('*.bmp','*.jdib')),('GIF', '*.gif')))
+        pic=Image.open(self.filename)
+       
+        self.tkimg=ImageTk.PhotoImage(pic)
+        self.canvas.create_image(0,0,anchor=NW,image=self.tkimg)
 
     def play(self):
         self.screen.mainloop()
@@ -238,13 +255,17 @@ class Tools:
         self.prevcolor.set("black")
         self.erasercolor="white"
 
-        #Stroke size
-        self.stroke_size=IntVar()
-        self.options=[1,3,5,7,9]    
-        self.size_list=OptionMenu(self.buttonarea,self.stroke_size,*self.options)
-        self.size_list.place(x=600,y=20)
-
+        #Stroke size 
+        self.stroke_size=Scale(self.buttonarea,from_=1,to=9,length=150,bg="red",orient="horizontal",relief="groove",label="Size")
+        self.stroke_size.place(x=580,y=20)
+        
         self.prev_x,self.prev_y=None,None
+
+        #color show button
+        self.clshow=Button(self.buttonarea,width=3,height=2,relief="groove")
+        self.clshow.place(x=770,y=20)
+        self.clshow["bg"]="black"
+       
 
     def isbrushbuttonpressed(self):
         self.canvas["cursor"]="tcross"
@@ -286,6 +307,7 @@ class Tools:
     def changecolorbrush(self):
         selectcolor=colorchooser.askcolor()
         self.brushcolor.set(selectcolor[1])
+        self.clshow["bg"]=self.brushcolor.get()
         if selectcolor!=None:
             self.remembercolor()
         if selectcolor==None:
@@ -297,7 +319,8 @@ class Tools:
     def changecoloreraser(self):
         selectcolor=colorchooser.askcolor()
         self.erasercolor=selectcolor[1]
-    
+
+     
 
 class Shapes:
     def __init__(self,canvasarea,selectionarea,objects):
