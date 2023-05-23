@@ -1,12 +1,13 @@
-
 from asyncio.windows_events import NULL
 from cgitb import text
 from email.mime import image
 from tkinter import *
 from tkinter import colorchooser
 from tkinter import filedialog
+from turtle import width
 import PIL
 from PIL import ImageGrab,Image,ImageTk
+from tkcolorpicker import askcolor
 
 class Paint:
     def __init__(self,width,height,color):
@@ -36,12 +37,19 @@ class Paint:
         #Canvas making
         self.canvas=Canvas(self.screen,width=width,height=height,bg=color)
         self.canvas.pack()
-    
+     
         #Tools class Composed
         self.obj_tools=Tools(self.canvas,self.buttonarea)
 
         #Shapes class Composed
         self.obj_shapes=Shapes(self.canvas,self.buttonarea,self.obj_tools)
+
+        #Scrollbar
+        self.scrolly=Scrollbar(self.canvas,bg="black",relief="groove",orient="vertical",command=self.canvas.yview,cursor="arrow")
+        self.scrolly.place(x=1281,y=0,height=576)
+
+        self.scrollx=Scrollbar(self.canvas,bg="black",relief="groove",orient="horizontal",command=self.canvas.xview,cursor="arrow")
+        self.scrollx.place(x=0,y=576,width=1283)
 
         #Button making
         self.clearpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\bin.PNG")
@@ -193,7 +201,6 @@ class Paint:
         self.cl10.place(x=810,y=50)
 
 
-
         self.pic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\brush.PNG")
         self.pic=self.pic.subsample(15,15)
         self.brushbutton=Button(self.buttonarea,image=self.pic,bg="white",command=self.obj_tools.isbrushbuttonpressed)
@@ -221,6 +228,19 @@ class Paint:
         self.pencil=Button(self.buttonarea,image=self.pencilpic,relief="flat",command=self.obj_tools.isbrushbuttonpressed)
         self.pencil.place(x=150,y=15)
 
+        self.zoompic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\zoommag.PNG")
+        self.zoompic=self.zoompic.subsample(50,50)
+
+        self.zoombutton=Button(self.buttonarea,image=self.zoompic,command=self.obj_tools.iszoombuttonpressed,relief="flat")
+        self.zoombutton.place(x=230,y=53)
+
+        self.colorpickpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\colorpicker.PNG")
+        self.colorpickpic=self.colorpickpic.subsample(8,8)
+
+        self.colorpickbutton=Button(self.buttonarea,image=self.colorpickpic,command=self.obj_tools.iscolorpickerbuttonpressed,relief="flat")
+        self.colorpickbutton.place(x=190,y=53)
+
+
     def save(self):
         self.fileloc=filedialog.asksaveasfilename(defaultextension="PNG",title="select file type",filetypes = (('JPEG', ('*.jpg','*.jpeg','*.jpe','*.jfif')),('PNG', '*.png'),('BMP', ('*.bmp','*.jdib')),('GIF', '*.gif')))
         x=self.canvas.winfo_rootx()+100
@@ -242,6 +262,8 @@ class Paint:
                 
     def clearbutton(self):
         self.canvas.delete("all")
+
+        
   
         
 class Tools:
@@ -271,6 +293,9 @@ class Tools:
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
+
 
         #canvas bind
         self.canvas.bind("<B1-Motion>",self.brush)     
@@ -299,7 +324,9 @@ class Tools:
     def iseraserbuttonpressed(self):
         self.canvas["cursor"]=DOTBOX
         self.canvas.unbind("<B1-Motion>")     
-        self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<ButtonRelease-1>")        
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
 
         self.canvas.bind("<B1-Motion>",self.eraser)
         self.canvas.bind("<ButtonRelease-1>",self.eraserend)
@@ -319,6 +346,43 @@ class Tools:
     def changecoloreraser(self):
         selectcolor=colorchooser.askcolor()
         self.erasercolor=selectcolor[1]
+
+    def zoomin(self,event):
+        self.canvas.scale("all",event.x,event.y,1.2,1.2)
+
+    def zoomout(self,event):
+        self.canvas.scale("all",event.x,event.y,0.9,0.9)
+
+
+    def iszoombuttonpressed(self):
+        self.canvas["cursor"]="sizing"
+        self.canvas.unbind("<B1-Motion>")     
+        self.canvas.unbind("<ButtonRelease-1>")
+
+        self.canvas.bind("<Button-1>",self.zoomin)
+        self.canvas.bind("<Button-3>",self.zoomout)
+
+
+    def colorpicker(self,event):
+        if self.prev_x == None or self.prev_y ==None:
+             self.prev_x,self.prev_y=event.x,event.y
+             return
+         
+        self.colorpick=askcolor(parent=self.canvas)
+        if self.colorpick[1]:
+            self.clshow.config(text="Selected color: " + str(self.colorpick[1]))            
+            self.clshow.config(bg=self.colorpick[1])
+
+    def iscolorpickerbuttonpressed(self):
+        self.canvas["cursor"]="arrow"
+        self.canvas.unbind("<B1-Motion>")     
+        self.canvas.unbind("<ButtonRelease-1>")        
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
+
+        self.canvas.bind("<Button-1>",self.colorpicker)
+        
+
 
      
 
@@ -369,6 +433,9 @@ class Shapes:
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
+
 
         self.canvas.bind("<B1-Motion>",self.circle)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
@@ -377,6 +444,8 @@ class Shapes:
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
 
         self.canvas.bind("<B1-Motion>",self.straightline)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
@@ -395,6 +464,8 @@ class Shapes:
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
 
         self.canvas.bind("<B1-Motion>",self.oval)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
@@ -413,6 +484,9 @@ class Shapes:
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
+
 
         self.canvas.bind("<B1-Motion>",self.rectangle)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
@@ -457,6 +531,8 @@ class Shapes:
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
 
         self.canvas.bind("<B1-Motion>",self.square)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
@@ -465,6 +541,8 @@ class Shapes:
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
 
         self.canvas.bind("<B1-Motion>",self.triangle)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
@@ -509,6 +587,8 @@ class Shapes:
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
 
         self.canvas.bind("<B1-Motion>",self.pentagon)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
@@ -557,6 +637,8 @@ class Shapes:
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
 
         self.canvas.bind("<B1-Motion>",self.hexagon)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
@@ -625,6 +707,8 @@ class Shapes:
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
 
         self.canvas.bind("<B1-Motion>",self.star)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
@@ -652,6 +736,8 @@ class Shapes:
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
 
         self.canvas.bind("<B1-Motion>",self.righttriangle)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
