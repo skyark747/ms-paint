@@ -1,16 +1,17 @@
 from asyncio.windows_events import NULL
 from cgitb import text
+from distutils.command.install import install
 from email.mime import image
+from textwrap import fill
 from tkinter import *
 from tkinter import colorchooser
 from tkinter import filedialog
 from turtle import width
 import PIL
 from PIL import ImageGrab,Image,ImageTk
-from tkcolorpicker import askcolor
 
 class Paint:
-    def __init__(self,width,height,color):
+    def __init__(self,width,height):
         #screen 
         self.screen=Tk()
         self.screen.title("Soban's Paint")
@@ -25,7 +26,7 @@ class Paint:
 
         self.colorcanvas=Frame(self.buttonarea,width=365,height=100,bg="mistyrose",highlightthickness=1,highlightbackground="black")
         self.colorcanvas.place(x=765,y=2)
-
+    
         #labels
         self.label=Label(self.buttonarea,text="Colors",width=5,bg="mistyrose")
         self.label.place(x=910,y=78)
@@ -35,7 +36,7 @@ class Paint:
 
 
         #Canvas making
-        self.canvas=Canvas(self.screen,width=width,height=height,bg=color)
+        self.canvas=Canvas(self.screen,width=width,height=height,bg="white")
         self.canvas.pack()
      
         #Tools class Composed
@@ -222,7 +223,6 @@ class Paint:
         self.load=Button(self.buttonarea,image=self.loadpic,relief="flat",command=self.loadimage)
         self.load.place(x=3,y=35)
 
-
         self.pencilpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\pencil1.PNG")
         self.pencilpic=self.pencilpic.subsample(x=84,y=84)
         self.pencil=Button(self.buttonarea,image=self.pencilpic,relief="flat",command=self.obj_tools.isbrushbuttonpressed)
@@ -240,6 +240,10 @@ class Paint:
         self.colorpickbutton=Button(self.buttonarea,image=self.colorpickpic,command=self.obj_tools.iscolorpickerbuttonpressed,relief="flat")
         self.colorpickbutton.place(x=190,y=53)
 
+        self.pbucketpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\balty.PNG")
+        self.pbucketpic=self.pbucketpic.subsample(x=10,y=10)
+        self.pbucket=Button(self.buttonarea,image=self.pbucketpic,relief="flat",command=self.obj_shapes.ispaintbucketbuttonpressed)
+        self.pbucket.place(x=190,y=15)
 
     def save(self):
         self.fileloc=filedialog.asksaveasfilename(defaultextension="PNG",title="select file type",filetypes = (('JPEG', ('*.jpg','*.jpeg','*.jpe','*.jfif')),('PNG', '*.png'),('BMP', ('*.bmp','*.jdib')),('GIF', '*.gif')))
@@ -367,12 +371,11 @@ class Tools:
         if self.prev_x == None or self.prev_y ==None:
              self.prev_x,self.prev_y=event.x,event.y
              return
-         
-        self.colorpick=askcolor(parent=self.canvas)
-        if self.colorpick[1]:
-            self.clshow.config(text="Selected color: " + str(self.colorpick[1]))            
-            self.clshow.config(bg=self.colorpick[1])
 
+        color=self.canvas.itemcget(self.canvas.find_closest(self.prev_x,self.prev_y),"fill")
+        self.clshow["bg"]=color
+
+         
     def iscolorpickerbuttonpressed(self):
         self.canvas["cursor"]="arrow"
         self.canvas.unbind("<B1-Motion>")     
@@ -382,6 +385,9 @@ class Tools:
 
         self.canvas.bind("<Button-1>",self.colorpicker)
         
+ 
+
+
 
 
      
@@ -402,6 +408,9 @@ class Shapes:
         self.id2=None
         self.id3=None
         self.id4=None
+
+        self.bucketcolor="blue"
+        self.wall=None
 
     def straightline(self,event):
         if self.shapeid is not None:
@@ -550,38 +559,30 @@ class Shapes:
     def pentagon(self,event):
         if self.shapeid is not None:
             self.canvas.delete(self.shapeid)
-            self.canvas.delete(self.lastid)
-            self.canvas.delete(self.newid)
-            self.canvas.delete(self.previd)
-
+            
         if self.prev_x==None or self.prev_y==None:
             self.prev_x,self.prev_y=event.x,event.y
             return
         radius=abs(self.prev_x-event.x)+abs(self.prev_y-event.y)
-
+    
         x1=self.prev_x
-        y1=self.prev_y
+        y1=self.prev_y-radius
 
-        x2=self.prev_x-radius/2
-        y2=self.prev_y-radius/2
+        x2=self.prev_x+radius
+        y2=self.prev_y
 
-        x3=self.prev_x+radius/2
-        y3=self.prev_y+radius/2
+        x3=self.prev_x-radius
+        y3=self.prev_y
 
-        x4=x1-radius/4
-        y4=y1+radius
+        x4=x2-radius/2
+        y4=self.prev_y+radius
        
-        x5=x1+radius/4
-        y5=y1+radius
+        x5=x3+radius/2
+        y5=y4
 
-        self.shapeid=self.canvas.create_polygon(x1,y1,x3,y3,x1,y1,x2,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-   
-        self.newid=self.canvas.create_polygon(x4,y4,x2,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-        
-        self.previd=self.canvas.create_polygon(x5,y5,x3,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        points=[x5,y5,x3,y3,x1,y1,x2,y2,x4,y4]
 
-        self.lastid=self.canvas.create_polygon(x5,y5,x4,y4,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-
+        self.shapeid=self.canvas.create_polygon(points,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
        
     def ispentagonbuttonpressed(self):
         self.canvas["cursor"]="tcross"
@@ -596,43 +597,34 @@ class Shapes:
     def hexagon(self,event):
         if self.shapeid is not None:
             self.canvas.delete(self.shapeid)
-            self.canvas.delete(self.lastid)
-            self.canvas.delete(self.newid)
-            self.canvas.delete(self.previd)
-            self.canvas.delete(self.storeid)
-
+           
         if self.prev_x==None or self.prev_y==None:
             self.prev_x,self.prev_y=event.x,event.y
             return
         radius=abs(self.prev_x-event.x)+abs(self.prev_y-event.y)
 
         x1=self.prev_x
-        y1=self.prev_y
+        y1=self.prev_y-radius
 
-        x2=self.prev_x-radius/2
-        y2=self.prev_y-radius/2
+        x2=self.prev_x+radius
+        y2=self.prev_y
 
-        x3=self.prev_x+radius/2
-        y3=self.prev_y+radius/2
+        x3=self.prev_x-radius
+        y3=self.prev_y
 
-        x4=x1-radius/2
-        y4=y1+radius
+        x4=x2
+        y4=self.prev_y+radius
        
-        x5=x1+radius/2
-        y5=y1+radius
+        x5=x3
+        y5=y4
 
-        y6=y1+1.4*radius
+        x6=x1
+        y6=self.prev_y+2*radius
 
-        self.shapeid=self.canvas.create_polygon(x1,y1,x3,y3,x1,y1,x2,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-   
-        self.newid=self.canvas.create_polygon(x4,y4,x2,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-        
-        self.previd=self.canvas.create_polygon(x5,y5,x3,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        points=[x6,y6,x5,y5,x3,y3,x1,y1,x2,y2,x4,y4]
 
-        self.lastid=self.canvas.create_polygon(x5,y5,x1,y6,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-       
-        self.storeid=self.canvas.create_polygon(x4,y4,x1,y6,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-
+        self.shapeid=self.canvas.create_polygon(points,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+  
     def ishexagonbuttonpressed(self):
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
@@ -646,62 +638,61 @@ class Shapes:
     def star(self,event):
         if self.shapeid is not None:
             self.canvas.delete(self.shapeid)
-            self.canvas.delete(self.lastid)
-            self.canvas.delete(self.newid)
-            self.canvas.delete(self.previd)
-            self.canvas.delete(self.storeid)
-            self.canvas.delete(self.id1)
-            self.canvas.delete(self.id2)
-            self.canvas.delete(self.id3)
                         
-            self.canvas.delete(self.id4)
         if self.prev_x==None or self.prev_y==None:
             self.prev_x,self.prev_y=event.x,event.y
             return
         radius=abs(self.prev_x-event.x)+abs(self.prev_y-event.y)
 
         x1=self.prev_x
-        y1=self.prev_y
+        y1=self.prev_y-radius
 
-        x2=self.prev_x-radius/3
-        y2=self.prev_y-radius/2
+        x2=self.prev_x+radius/2
+        y2=self.prev_y
 
-        x3=self.prev_x+radius/3
-        y3=self.prev_y+radius/2
+        x3=self.prev_x-radius/2
+        y3=y2
 
-        x4=x1-1.3*radius
-        y4=y1+radius
+        x4=x1+2*radius
+        y4=self.prev_y
        
-        x5=x1+1.3*radius
-        y5=y1+radius
+        x5=x1-2*radius
+        y5=y4
 
-        x6=x2-radius/3
-        y6=y3+radius/2.3
-        
-        x7=x3+radius/3
-        y7=y1+1.5*radius
-        
-        y8=y1+1.2*radius
-        x8=x2-0.7*radius
-        x9=x3+0.7*radius
+        x6=x1-0.8*radius
+        y6=self.prev_y+radius/1.5
 
-        self.shapeid=self.canvas.create_polygon(x1,y1,x3,y3,x1,y1,x2,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        x7=x1+0.8*radius
+        y7=y6
+
+        x8=x3-radius
+        y8=self.prev_y+2*radius
+
+        x9=x2+radius
+        y9=y8
+
+        x10=self.prev_x
+        y10=y3+1.13*radius
+       
+        points=[x8,y8,x6,y6,x5,y5,x3,y3,x1,y1,x2,y2,x4,y4,x7,y7,x9,y9,x10,y10]
+        
+        self.shapeid=self.canvas.create_polygon(points,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
    
-        self.newid=self.canvas.create_polygon(x2,y3,x4,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        #self.newid=self.canvas.create_polygon(x2,y3,x4,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
         
-        self.previd=self.canvas.create_polygon(x5,y3,x3,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        #self.previd=self.canvas.create_polygon(x5,y3,x3,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
 
-        self.lastid=self.canvas.create_polygon(x5,y3,x7,y6,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        #self.lastid=self.canvas.create_polygon(x5,y3,x7,y6,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
        
-        self.storeid=self.canvas.create_polygon(x4,y3,x6,y6,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        #self.storeid=self.canvas.create_polygon(x4,y3,x6,y6,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
         
-        self.id1=self.canvas.create_polygon(x6,y6,x8,y7,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        #self.id1=self.canvas.create_polygon(x6,y6,x8,y7,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
 
-        self.id2=self.canvas.create_polygon(x8,y7,x1,y8,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        #self.id2=self.canvas.create_polygon(x8,y7,x1,y8,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
 
-        self.id3=self.canvas.create_polygon(x1,y8,x9,y7,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        #self.id3=self.canvas.create_polygon(x1,y8,x9,y7,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
 
-        self.id4=self.canvas.create_polygon(x9,y7,x7,y6,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        #self.id4=self.canvas.create_polygon(x9,y7,x7,y6,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
 
     def isstarbuttonpressed(self):
         self.canvas["cursor"]="tcross"
@@ -731,6 +722,7 @@ class Shapes:
         y3=self.prev_y+radius/2
 
         self.shapeid=self.canvas.create_polygon(x1,y1,x1,y2,x3,y1,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
+        self.wall=self.shapeid
 
     def isrighttrianglebuttonpressed(self):
         self.canvas["cursor"]="tcross"
@@ -742,12 +734,38 @@ class Shapes:
         self.canvas.bind("<B1-Motion>",self.righttriangle)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
 
+  
+    def flood_fill(self,x, y, target_color, replacement_color):
+      current_color = self.canvas.itemcget(self.canvas.find_closest(x, y), "fill")
+      if current_color != target_color:
+            return
+      self.canvas.itemconfig(self.canvas.find_closest(x, y), fill=replacement_color)
+      self.flood_fill(x - 1, y, target_color, replacement_color)
+      self.flood_fill(x + 1, y, target_color, replacement_color)
+      self.flood_fill(x, y - 1, target_color, replacement_color)
+      self.flood_fill(x, y + 1, target_color, replacement_color)
+
+    def start_flood_fill(self,event):
+        x, y = event.x, event.y
+        target_color = self.canvas.itemcget(self.canvas.find_closest(x, y), "fill")
+        replacement_color = "blue"
+        self.flood_fill(x, y, target_color, replacement_color)
+            
+    def ispaintbucketbuttonpressed(self):
+        self.canvas["cursor"]="spraycan"
+        self.canvas.unbind("<B1-Motion>")     
+        self.canvas.unbind("<ButtonRelease-1>")        
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
+
+        self.canvas.bind("<Button-1>",self.start_flood_fill)
+
 
     def shapeend(self,event):
         self.prev_x,self.prev_y=None,None
         self.shapeid=None
-        self.previd,self.newid,self.lastid,self.storeid=None,None,None,None
-        self.id1,self.id2,self.id3,self.id4=None,None,None,None
+        #self.previd,self.newid,self.lastid,self.storeid=None,None,None,None
+        #self.id1,self.id2,self.id3,self.id4=None,None,None,None
 
 
-Paint(1300,700,"white").play()
+Paint(1300,700).play()
