@@ -678,22 +678,6 @@ class Shapes:
         
         self.shapeid=self.canvas.create_polygon(points,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
    
-        #self.newid=self.canvas.create_polygon(x2,y3,x4,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-        
-        #self.previd=self.canvas.create_polygon(x5,y3,x3,y3,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-
-        #self.lastid=self.canvas.create_polygon(x5,y3,x7,y6,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-       
-        #self.storeid=self.canvas.create_polygon(x4,y3,x6,y6,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-        
-        #self.id1=self.canvas.create_polygon(x6,y6,x8,y7,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-
-        #self.id2=self.canvas.create_polygon(x8,y7,x1,y8,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-
-        #self.id3=self.canvas.create_polygon(x1,y8,x9,y7,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-
-        #self.id4=self.canvas.create_polygon(x9,y7,x7,y6,outline=self.paintobjs.brushcolor.get(),width=self.paintobjs.stroke_size.get(),fill="")
-
     def isstarbuttonpressed(self):
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
@@ -764,8 +748,6 @@ class Shapes:
     def shapeend(self,event):
         self.prev_x,self.prev_y=None,None
         self.shapeid=None
-        #self.previd,self.newid,self.lastid,self.storeid=None,None,None,None
-        #self.id1,self.id2,self.id3,self.id4=None,None,None,None
-
+ 
 
 Paint(1300,700).play()
