@@ -21,23 +21,33 @@ class Paint:
         self.buttonarea=Canvas(self.screen,width=width,height=100,highlightbackground="black",highlightthickness=2)
         self.buttonarea.pack()
 
-        self.shapescanvas=Frame(self.buttonarea,width=182,height=100,bg="lightblue",highlightthickness=1,highlightbackground="black")
-        self.shapescanvas.place(x=374,y=2)
+        self.shapescanvas=Frame(self.buttonarea,width=195,height=100,bg="lightblue",highlightthickness=1,highlightbackground="black")
+        self.shapescanvas.place(x=368,y=2)
 
-        self.colorcanvas=Frame(self.buttonarea,width=365,height=100,bg="mistyrose",highlightthickness=1,highlightbackground="black")
+        self.shapescanvas_1=Frame(self.buttonarea,width=182,height=64,bg="white",highlightbackground="black",highlightthickness=1)
+        self.shapescanvas_1.place(x=374,y=16)
+
+        self.colorcanvas=Frame(self.buttonarea,width=400,height=100,bg="mistyrose",highlightthickness=1,highlightbackground="black")
         self.colorcanvas.place(x=765,y=2)
+
+        self.toolsframe=Frame(self.buttonarea,width=130,height=100,highlightthickness=1,highlightbackground="black")
+        self.toolsframe.place(x=140,y=2)
     
         #labels
         self.label=Label(self.buttonarea,text="Colors",width=5,bg="mistyrose")
-        self.label.place(x=910,y=78)
+        self.label.place(x=920,y=80)
 
         self.labelshape=Label(self.buttonarea,text="Shapes",width=5,bg="lightblue")
-        self.labelshape.place(x=440,y=78)
+        self.labelshape.place(x=440,y=80)
 
+        self.labeltools=Label(self.buttonarea,text="Tools",width=5)
+        self.labeltools.place(x=185,y=80)
 
         #Canvas making
         self.canvas=Canvas(self.screen,width=width,height=height,bg="white")
         self.canvas.pack()
+        self.canvas.create_rectangle(0,0,width,height,outline="black",width=1)
+
      
         #Tools class Composed
         self.obj_tools=Tools(self.canvas,self.buttonarea)
@@ -54,9 +64,8 @@ class Paint:
 
         #Button making
         self.clearpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\bin.PNG")
-        self.clearpic=self.clearpic.subsample(x=50,y=50)
+        self.clearpic=self.clearpic.subsample(x=48,y=50)
 
-       
         self.clear=Button(self.buttonarea,image=self.clearpic,command=self.clearbutton,relief="flat")
         self.clear.place(x=5,y=72)
 
@@ -64,148 +73,148 @@ class Paint:
         self.straightlinepic=self.straightlinepic.subsample(x=20,y=20)
 
         self.straightline=Button(self.buttonarea,image=self.straightlinepic,bg="lightblue",relief="groove",command=self.obj_shapes.islinebuttonpressed)
-        self.straightline.place(x=378,y=6)
+        self.straightline.place(x=378,y=20)
 
         self.circlepic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\circle.PNG")
         self.circlepic=self.circlepic.subsample(x=120,y=128)
 
         self.circle=Button(self.buttonarea,image=self.circlepic,bg="lightblue",relief="groove",command=self.obj_shapes.iscirclebuttonpressed)
-        self.circle.place(x=412,y=6)
+        self.circle.place(x=412,y=20)
 
         self.ovalpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\ovalshape.PNG")
         self.ovalpic=self.ovalpic.subsample(x=65,y=40)
 
         self.circle=Button(self.buttonarea,image=self.ovalpic,bg="lightblue",relief="groove",command=self.obj_shapes.isovalbuttonpressed)
-        self.circle.place(x=447,y=6)
+        self.circle.place(x=447,y=20)
 
         self.rectanglepic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\rectangleshape.PNG")
         self.rectanglepic=self.rectanglepic.subsample(x=23,y=25)
 
         self.rectangleshape=Button(self.buttonarea,image=self.rectanglepic,bg="lightblue",relief="groove",command=self.obj_shapes.isrectanglebuttonpressed)
-        self.rectangleshape.place(x=483,y=6)
+        self.rectangleshape.place(x=483,y=20)
 
         self.squarepic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\square.PNG")
         self.squarepic=self.squarepic.subsample(x=60,y=64)
 
         self.squareshape=Button(self.buttonarea,image=self.squarepic,bg="lightblue",relief="groove",command=self.obj_shapes.issquarebuttonpressed)
-        self.squareshape.place(x=520,y=6)
+        self.squareshape.place(x=520,y=20)
 
         self.trianglepic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\t1.PNG")
         self.trianglepic=self.trianglepic.subsample(x=37,y=35)
 
         self.triangleshape=Button(self.buttonarea,image=self.trianglepic,bg="lightblue",relief="groove",command=self.obj_shapes.istrianglebuttonpressed)
-        self.triangleshape.place(x=378,y=40)
+        self.triangleshape.place(x=378,y=50)
 
         self.pentagonpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\pentagon.PNG")
         self.pentagonpic=self.pentagonpic.subsample(x=45,y=50)
 
         self.pentagonshape=Button(self.buttonarea,image=self.pentagonpic,bg="lightblue",relief="groove",command=self.obj_shapes.ispentagonbuttonpressed)
-        self.pentagonshape.place(x=412,y=40)
+        self.pentagonshape.place(x=412,y=50)
 
         self.hexagonpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\hexagon.PNG")
         self.hexagonpic=self.hexagonpic.subsample(x=40,y=47)
 
         self.hexagonshape=Button(self.buttonarea,image=self.hexagonpic,bg="lightblue",relief="groove",command=self.obj_shapes.ishexagonbuttonpressed)
-        self.hexagonshape.place(x=447,y=40)
+        self.hexagonshape.place(x=447,y=50)
 
         self.starpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\st.PNG")
-        self.starpic=self.starpic.subsample(x=42,y=44)
+        self.starpic=self.starpic.subsample(x=42,y=45)
 
         self.starshape=Button(self.buttonarea,image=self.starpic,bg="lightblue",relief="groove",command=self.obj_shapes.isstarbuttonpressed)
-        self.starshape.place(x=483,y=40)
+        self.starshape.place(x=483,y=50)
 
-        self.rtripic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\right.PNG")
-        self.rtripic=self.rtripic.subsample(x=80,y=73)
+        self.rtripic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\t2.PNG")
+        self.rtripic=self.rtripic.subsample(x=19,y=25)
 
         self.rtrishape=Button(self.buttonarea,image=self.rtripic,bg="lightblue",relief="groove",command=self.obj_shapes.isrighttrianglebuttonpressed)
-        self.rtrishape.place(x=520,y=40)
+        self.rtrishape.place(x=520,y=50)
 
         self.pict=PhotoImage(file=r"D:\\ms paint\ms paint\pics\color.PNG")
         self.pict=self.pict.subsample(50,30)
         self.colorbutton=Button(self.buttonarea,image=self.pict,bg="white",relief="groove",command=self.obj_tools.changecolorbrush)
-        self.colorbutton.place(x=1000,y=20)
+        self.colorbutton.place(x=1040,y=20)
 
         self.color=Button(self.buttonarea,text="color 2",image=self.pict,bg="white",relief="groove",command=self.obj_tools.changecoloreraser)
-        self.color.place(x=1080,y=20)
+        self.color.place(x=1110,y=20)
 
         self.picred=PhotoImage(file=r"D:\\ms paint\ms paint\pics\red.PNG")
         self.picred=self.picred.subsample(130,90)
      
-        self.cl0=Button(self.buttonarea,image=self.picred,bg="white",command=lambda:self.obj_tools.brushcolor.set("red"),relief="groove")
-        self.cl0.place(x=840,y=20)
+        self.cl0=Button(self.buttonarea,image=self.picred,bg="white",command=lambda:[self.obj_tools.brushcolor.set("red"),self.obj_tools.clshow.configure(bg="red")],relief="groove")
+        self.cl0.place(x=880,y=20)
         
 
         self.picdarkred=PhotoImage(file=r"D:\\ms paint\ms paint\pics\darkred.PNG")
         self.picdarkred=self.picdarkred.subsample(9,10)
      
-        self.cl=Button(self.buttonarea,image=self.picdarkred,bg="white",command=lambda:self.obj_tools.brushcolor.set("darkred"),relief="groove")
-        self.cl.place(x=840,y=50)
+        self.cl=Button(self.buttonarea,image=self.picdarkred,bg="white",command=lambda:[self.obj_tools.brushcolor.set("darkred"),self.obj_tools.clshow.configure(bg="darkred")],relief="groove")
+        self.cl.place(x=880,y=50)
 
         self.picorange=PhotoImage(file=r"D:\\ms paint\ms paint\pics\orange.PNG")
         self.picorange=self.picorange.subsample(15,10)
      
-        self.cl1=Button(self.buttonarea,image=self.picorange,bg="white",command=lambda:self.obj_tools.brushcolor.set("orange"),relief="groove")
-        self.cl1.place(x=870,y=20)
+        self.cl1=Button(self.buttonarea,image=self.picorange,bg="white",command=lambda:[self.obj_tools.brushcolor.set("orange"),self.obj_tools.clshow.configure(bg="orange")],relief="groove")
+        self.cl1.place(x=910,y=20)
 
         self.picyellow=PhotoImage(file=r"D:\\ms paint\ms paint\pics\yellow.PNG")
         self.picyellow=self.picyellow.subsample(18,10)
      
-        self.cl2=Button(self.buttonarea,image=self.picyellow,bg="white",command=lambda:self.obj_tools.brushcolor.set("yellow"),relief="groove")
-        self.cl2.place(x=900,y=20)
+        self.cl2=Button(self.buttonarea,image=self.picyellow,bg="white",command=lambda:[self.obj_tools.brushcolor.set("yellow"),self.obj_tools.clshow.configure(bg="yellow")],relief="groove")
+        self.cl2.place(x=940,y=20)
 
         self.picgreen=PhotoImage(file=r"D:\\ms paint\ms paint\pics\green.PNG")
-        self.picgreen=self.picgreen.subsample(13,10)
+        self.picgreen=self.picgreen.subsample(12,10)
      
-        self.cl3=Button(self.buttonarea,image=self.picgreen,bg="white",command=lambda:self.obj_tools.brushcolor.set("green"),relief="groove")
-        self.cl3.place(x=930,y=20)
+        self.cl3=Button(self.buttonarea,image=self.picgreen,bg="white",command=lambda:[self.obj_tools.brushcolor.set("green"),self.obj_tools.clshow.configure(bg="green")],relief="groove")
+        self.cl3.place(x=970,y=20)
 
         self.picpurple=PhotoImage(file=r"D:\\ms paint\ms paint\pics\purple.PNG")
         self.picpurple=self.picpurple.subsample(16,10)
 
-        self.cl4=Button(self.buttonarea,image=self.picpurple,bg="white",command=lambda:self.obj_tools.brushcolor.set("purple"),relief="groove")
-        self.cl4.place(x=960,y=20)
+        self.cl4=Button(self.buttonarea,image=self.picpurple,bg="white",command=lambda:[self.obj_tools.brushcolor.set("purple"),self.obj_tools.clshow.configure(bg="purple")],relief="groove")
+        self.cl4.place(x=1000,y=20)
 
         self.picbrown=PhotoImage(file=r"D:\\ms paint\ms paint\pics\brown.PNG")
         self.picbrown=self.picbrown.subsample(15,10)
 
-        self.cl5=Button(self.buttonarea,image=self.picbrown,bg="white",command=lambda:self.obj_tools.brushcolor.set("brown"),relief="groove")
-        self.cl5.place(x=870,y=50)
+        self.cl5=Button(self.buttonarea,image=self.picbrown,bg="white",command=lambda:[self.obj_tools.brushcolor.set("brown"),self.obj_tools.clshow.configure(bg="brown")],relief="groove")
+        self.cl5.place(x=910,y=50)
 
         self.picparrot=PhotoImage(file=r"D:\\ms paint\ms paint\pics\parrot.PNG")
         self.picparrot=self.picparrot.subsample(17,10)
 
-        self.cl6=Button(self.buttonarea,image=self.picparrot,bg="white",command=lambda:self.obj_tools.brushcolor.set("yellowgreen"),relief="groove")
-        self.cl6.place(x=900,y=50)
+        self.cl6=Button(self.buttonarea,image=self.picparrot,bg="white",command=lambda:[self.obj_tools.brushcolor.set("yellowgreen"),self.obj_tools.clshow.configure(bg="yellowgreen")],relief="groove")
+        self.cl6.place(x=940,y=50)
         
         self.piclightblue=PhotoImage(file=r"D:\\ms paint\ms paint\pics\pink.PNG")
-        self.piclightblue=self.piclightblue.subsample(14,10)
+        self.piclightblue=self.piclightblue.subsample(12,10)
 
-        self.cl7=Button(self.buttonarea,image=self.piclightblue,bg="white",command=lambda:self.obj_tools.brushcolor.set("pink"),relief="groove")
-        self.cl7.place(x=930,y=50)
+        self.cl7=Button(self.buttonarea,image=self.piclightblue,bg="white",command=lambda:[self.obj_tools.brushcolor.set("pink"),self.obj_tools.clshow.configure(bg="pink")],relief="groove")
+        self.cl7.place(x=970,y=50)
 
         self.picturqoise=PhotoImage(file=r"D:\\ms paint\ms paint\pics\turqoise.PNG")
         self.picturqoise=self.picturqoise.subsample(17,10)
 
-        self.cl8=Button(self.buttonarea,image=self.picturqoise,bg="white",command=lambda:self.obj_tools.brushcolor.set("turquoise"),relief="groove")
-        self.cl8.place(x=960,y=50)
+        self.cl8=Button(self.buttonarea,image=self.picturqoise,bg="white",command=lambda:[self.obj_tools.brushcolor.set("turquoise"),self.obj_tools.clshow.configure(bg="turquoise")],relief="groove")
+        self.cl8.place(x=1000,y=50)
 
         self.picblue=PhotoImage(file=r"D:\\ms paint\ms paint\pics\bluegrey.PNG")
         self.picblue=self.picblue.subsample(400,250)
 
-        self.cl9=Button(self.buttonarea,image=self.picblue,bg="white",command=lambda:self.obj_tools.brushcolor.set("blue"),relief="groove")
-        self.cl9.place(x=810,y=20)
+        self.cl9=Button(self.buttonarea,image=self.picblue,bg="white",command=lambda:[self.obj_tools.brushcolor.set("blue"),self.obj_tools.clshow.configure(bg="blue")],relief="groove")
+        self.cl9.place(x=850,y=20)
 
         self.picblush=PhotoImage(file=r"D:\\ms paint\ms paint\pics\blush.PNG")
         self.picblush=self.picblush.subsample(15,10)
 
-        self.cl10=Button(self.buttonarea,image=self.picblush,bg="white",command=lambda:self.obj_tools.brushcolor.set("mistyrose"),relief="groove")
-        self.cl10.place(x=810,y=50)
+        self.cl10=Button(self.buttonarea,image=self.picblush,bg="white",command=lambda:[self.obj_tools.brushcolor.set("mistyrose"),self.obj_tools.clshow.configure(bg="mistyrose")],relief="groove")
+        self.cl10.place(x=850,y=50)
 
 
         self.pic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\brush.PNG")
-        self.pic=self.pic.subsample(15,15)
-        self.brushbutton=Button(self.buttonarea,image=self.pic,bg="white",command=self.obj_tools.isbrushbuttonpressed)
-        self.brushbutton.place(x=300,y=6)
+        self.pic=self.pic.subsample(15,13)
+        self.brushbutton=Button(self.buttonarea,image=self.pic,bg="white",command=self.obj_tools.isbrushbuttonpressed,relief="groove")
+        self.brushbutton.place(x=300,y=20)
 
         self.picture=PhotoImage(file=r"D:\\ms paint\ms paint\pics\eraser1.PNG")
         self.picture=self.picture.subsample(7,7)
@@ -242,8 +251,34 @@ class Paint:
 
         self.pbucketpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\balty.PNG")
         self.pbucketpic=self.pbucketpic.subsample(x=10,y=10)
-        self.pbucket=Button(self.buttonarea,image=self.pbucketpic,relief="flat",command=self.obj_shapes.ispaintbucketbuttonpressed)
+        self.pbucket=Button(self.buttonarea,image=self.pbucketpic,relief="flat",command=self.obj_tools.ispaintbucketbuttonpressed)
         self.pbucket.place(x=190,y=15)
+
+        self.textpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\text.PNG")
+        self.textpic=self.textpic.subsample(x=40,y=40)
+        self.text=Button(self.buttonarea,image=self.textpic,relief="flat",command=self.text)
+        self.text.place(x=230,y=15)
+
+        self.selectareapic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\balty.PNG")
+        self.selectareapic=self.selectareapic.subsample(x=10,y=10)
+        self.selectarea=Button(self.buttonarea,image=self.selectareapic,relief="groove",command=self.obj_shapes.isselectbuttonpressed)
+        self.selectarea.place(x=63,y=15)
+
+        self.movement=Button(self.buttonarea,text="move",relief="groove",command=self.obj_shapes.ismovement)
+        self.movement.place(x=63,y=40)
+
+    def text(self):
+        self.write_text=StringVar()
+        self.enter=Entry(self.buttonarea,width=20,textvariable=self.write_text)
+        self.enter.place(x=1170,y=20)
+        self.canvas.unbind("<B1-Motion>")     
+        self.canvas.unbind("<ButtonRelease-1>")        
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
+
+        self.canvas.bind("<Button-1>",self.textshow)
+    def textshow(self,event):      
+        self.canvas.create_text(event.x,event.y,text=self.write_text.get())
 
     def save(self):
         self.fileloc=filedialog.asksaveasfilename(defaultextension="PNG",title="select file type",filetypes = (('JPEG', ('*.jpg','*.jpeg','*.jpe','*.jfif')),('PNG', '*.png'),('BMP', ('*.bmp','*.jdib')),('GIF', '*.gif')))
@@ -282,17 +317,19 @@ class Tools:
         self.erasercolor="white"
 
         #Stroke size 
-        self.stroke_size=Scale(self.buttonarea,from_=1,to=9,length=150,bg="red",orient="horizontal",relief="groove",label="Size")
-        self.stroke_size.place(x=580,y=20)
+        self.stroke_size=Scale(self.buttonarea,from_=1,to=10,length=150,bg="red",orient="horizontal",relief="groove",label="Size")
+        self.stroke_size.place(x=585,y=20)
         
         self.prev_x,self.prev_y=None,None
-
-        #color show button
-        self.clshow=Button(self.buttonarea,width=3,height=2,relief="groove")
+           
+        #brush color button
+        self.clshow=Button(self.buttonarea,width=3,height=2,relief="groove",bg="black")
         self.clshow.place(x=770,y=20)
-        self.clshow["bg"]="black"
-       
 
+        #eraser color button
+        self.clshow_1=Button(self.buttonarea,width=3,height=2,relief="groove")
+        self.clshow_1.place(x=810,y=20)
+             
     def isbrushbuttonpressed(self):
         self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
@@ -339,17 +376,13 @@ class Tools:
         selectcolor=colorchooser.askcolor()
         self.brushcolor.set(selectcolor[1])
         self.clshow["bg"]=self.brushcolor.get()
-        if selectcolor!=None:
-            self.remembercolor()
         if selectcolor==None:
-            self.brushcolor.set(self.prevcolor.get())
+            ...
    
-    def remembercolor(self):
-        self.prevcolor.set(self.brushcolor.get())
-
     def changecoloreraser(self):
         selectcolor=colorchooser.askcolor()
         self.erasercolor=selectcolor[1]
+        self.clshow_1["bg"]=self.erasercolor
 
     def zoomin(self,event):
         self.canvas.scale("all",event.x,event.y,1.2,1.2)
@@ -362,18 +395,17 @@ class Tools:
         self.canvas["cursor"]="sizing"
         self.canvas.unbind("<B1-Motion>")     
         self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
 
         self.canvas.bind("<Button-1>",self.zoomin)
         self.canvas.bind("<Button-3>",self.zoomout)
 
 
-    def colorpicker(self,event):
-        if self.prev_x == None or self.prev_y ==None:
-             self.prev_x,self.prev_y=event.x,event.y
-             return
-
-        color=self.canvas.itemcget(self.canvas.find_closest(self.prev_x,self.prev_y),"fill")
-        self.clshow["bg"]=color
+    def colorpicker(self,event):   
+        self.color=self.canvas.itemcget(self.canvas.find_closest(event.x,event.y),"fill")
+        self.brushcolor.set(self.color)
+        self.clshow["bg"]=self.color
 
          
     def iscolorpickerbuttonpressed(self):
@@ -384,13 +416,72 @@ class Tools:
         self.canvas.unbind("<Button-3>")
 
         self.canvas.bind("<Button-1>",self.colorpicker)
+        self.canvas.bind("<ButtonRelease-1>",self.brushend)
         
- 
+    def floodfill(self,x,y,n,oldcolor): 
+        points=[x,y]      
+        item=self.canvas.find_enclosed(0,0,1300,700)[-1]
+        item_2=self.canvas.find_closest(x,y)
+        prev_color=StringVar()
+        prev_color.set("white")
+        if item==():
+            self.canvas.itemconfig(item,fill=self.clshow["bg"])
+        if item==item_2:
+            newcolor=self.canvas.itemcget(item,"fill")
+            if oldcolor != newcolor:
+                return
+            self.canvas.itemconfig(item,fill=self.clshow["bg"])
+            prev_color.set(self.clshow["bg"])
+            if item!=item_2:
+                newcolor=self.canvas.itemcget(item_2,"fill")
+                if oldcolor != newcolor:
+                   return
+                self.canvas.itemconfig(item_2,fill=self.clshow["bg"])
+                if self.canvas.itemcget(item,"fill")=="":
+                    self.canvas.itemconfig(item,fill="white")
+                else:
+                    return
+                self.floodfill(x,y-n,n,oldcolor)
+                self.floodfill(x,y+n,n,oldcolor)
+                self.floodfill(x+n,y,n,oldcolor)
+                self.floodfill(x-n,y,n,oldcolor)
+            else:
+                return
+
+        elif item!=item_2:
+            oldcolor=self.canvas.itemcget(item_2,"fill")
+            newcolor=self.canvas.itemcget(item_2,"fill")
+            if oldcolor != newcolor:
+                return
+            self.canvas.itemconfig(item_2,fill=self.clshow["bg"])
+            if self.canvas.itemcget(item,"fill")=="":
+                    self.canvas.itemconfig(item,fill="white")
+            else:
+                return
+
+            self.floodfill(x,y-n,n,oldcolor)
+            self.floodfill(x,y+n,n,oldcolor)
+            self.floodfill(x+n,y,n,oldcolor)
+            self.floodfill(x-n,y,n,oldcolor)
+
+    def paintbucket(self,event):
+        if self.prev_x == None or self.prev_y == None:
+            self.prev_x,self.prev_y=event.x,event.y
+
+        oldcolor=self.canvas.itemcget(self.canvas.find_closest(self.prev_x,self.prev_y),"fill")
+        self.floodfill(self.prev_x,self.prev_y,1,oldcolor)
+
+    def ispaintbucketbuttonpressed(self):
+        self.canvas["cursor"]="spraycan"
+        self.canvas.unbind("<B1-Motion>")     
+        self.canvas.unbind("<ButtonRelease-1>")        
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
+       
+        self.canvas.bind("<Button-1>",self.paintbucket)
+        self.canvas.bind("<ButtonRelease-1>",self.brushend)
 
 
-
-
-     
 
 class Shapes:
     def __init__(self,canvasarea,selectionarea,objects):
@@ -401,17 +492,7 @@ class Shapes:
         self.prev_x,self.prev_y=None,None
         
         self.shapeid=None
-        self.lastid=None
-        self.previd=None
-        self.newid=None
-        self.id1=None
-        self.id2=None
-        self.id3=None
-        self.id4=None
-
-        self.bucketcolor="blue"
-        self.wall=None
-
+        
     def straightline(self,event):
         if self.shapeid is not None:
             self.canvas.delete(self.shapeid)
@@ -717,33 +798,42 @@ class Shapes:
 
         self.canvas.bind("<B1-Motion>",self.righttriangle)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
-
-  
-    def flood_fill(self,x, y, target_color, replacement_color):
-      current_color = self.canvas.itemcget(self.canvas.find_closest(x, y), "fill")
-      if current_color != target_color:
+        
+    def selectarea(self,event):
+        if self.shapeid is not None:
+            self.canvas.delete(self.shapeid)
+        if self.prev_x==None or self.prev_y==None:
+            self.prev_x,self.prev_y=event.x,event.y
             return
-      self.canvas.itemconfig(self.canvas.find_closest(x, y), fill=replacement_color)
-      self.flood_fill(x - 1, y, target_color, replacement_color)
-      self.flood_fill(x + 1, y, target_color, replacement_color)
-      self.flood_fill(x, y - 1, target_color, replacement_color)
-      self.flood_fill(x, y + 1, target_color, replacement_color)
 
-    def start_flood_fill(self,event):
-        x, y = event.x, event.y
-        target_color = self.canvas.itemcget(self.canvas.find_closest(x, y), "fill")
-        replacement_color = "blue"
-        self.flood_fill(x, y, target_color, replacement_color)
-            
-    def ispaintbucketbuttonpressed(self):
-        self.canvas["cursor"]="spraycan"
+        self.shapeid=self.canvas.create_rectangle(self.prev_x,self.prev_y,event.x,event.y,outline="black",width="1")
+        self.wall=self.shapeid
+                  
+    def move(self,event):
+        selectedarea=[self.prev_x,self.prev_y,self.canvas.winfo_pointerx,self.canvas.winfo_pointery]
+
+        self.canvas.find_overlapping(selectedarea)
+
+
+    def isselectbuttonpressed(self):
+        self.canvas["cursor"]="tcross"
         self.canvas.unbind("<B1-Motion>")     
-        self.canvas.unbind("<ButtonRelease-1>")        
+        self.canvas.unbind("<ButtonRelease-1>")
         self.canvas.unbind("<Button-1>")
         self.canvas.unbind("<Button-3>")
 
-        self.canvas.bind("<Button-1>",self.start_flood_fill)
+        self.canvas.bind("<B1-Motion>",self.selectarea)
+        self.canvas.bind("<ButtonRelease-1>",self.shapeend)
 
+    def ismovement(self):
+        self.canvas.unbind("<B1-Motion>")     
+        self.canvas.unbind("<ButtonRelease-1>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<Button-3>")
+
+
+        self.canvas.bind("<Button-1>",self.move)
+        self.canvas.bind("<ButtonRelease-1>",self.shapeend)
 
     def shapeend(self,event):
         self.prev_x,self.prev_y=None,None
