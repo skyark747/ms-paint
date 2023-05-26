@@ -259,13 +259,14 @@ class Paint:
         self.text=Button(self.buttonarea,image=self.textpic,relief="flat",command=self.text)
         self.text.place(x=230,y=15)
 
-        self.selectareapic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\balty.PNG")
-        self.selectareapic=self.selectareapic.subsample(x=10,y=10)
-        self.selectarea=Button(self.buttonarea,image=self.selectareapic,relief="groove",command=self.obj_shapes.isselectbuttonpressed)
+        self.selectionpic=PhotoImage(file=r"D:\\ms paint\ms paint\pics\rectangleshape.PNG")
+        self.selectionpic=self.selectionpic.subsample(x=20,y=20)
+
+        self.selectarea=Button(self.buttonarea,image=self.selectionpic,relief="groove",command=self.obj_shapes.isselectbuttonpressed)
         self.selectarea.place(x=63,y=15)
 
         self.movement=Button(self.buttonarea,text="move",relief="groove",command=self.obj_shapes.ismovement)
-        self.movement.place(x=63,y=40)
+        self.movement.place(x=60,y=60)
 
     def text(self):
         self.write_text=StringVar()
@@ -327,7 +328,7 @@ class Tools:
         self.clshow.place(x=770,y=20)
 
         #eraser color button
-        self.clshow_1=Button(self.buttonarea,width=3,height=2,relief="groove")
+        self.clshow_1=Button(self.buttonarea,width=3,height=2,relief="groove",bg="white")
         self.clshow_1.place(x=810,y=20)
              
     def isbrushbuttonpressed(self):
@@ -376,8 +377,6 @@ class Tools:
         selectcolor=colorchooser.askcolor()
         self.brushcolor.set(selectcolor[1])
         self.clshow["bg"]=self.brushcolor.get()
-        if selectcolor==None:
-            ...
    
     def changecoloreraser(self):
         selectcolor=colorchooser.askcolor()
@@ -418,9 +417,28 @@ class Tools:
         self.canvas.bind("<Button-1>",self.colorpicker)
         self.canvas.bind("<ButtonRelease-1>",self.brushend)
         
-    def floodfill(self,x,y,n,oldcolor): 
+    def floodfill(self,x,y,n,oldcolor,pic,image,target_color): 
+    
+        #c=pic.getpixel((x,y))
+        #color = '#%02x%02x%02x' % c
+        #if color ==oldcolor:           
+        #   pic.putpixel((x,y),(255,0,0))    
+        #   photo_image = ImageTk.PhotoImage(pic)
+        #   self.canvas.itemconfig(image, image=photo_image)
+
+        #   self.floodfill(x-n,y,n,oldcolor,pic,image)
+               
+        #   self.floodfill(x+n,y,n,oldcolor,pic,image)
+               
+        #   self.floodfill(x,y-n,n,oldcolor,pic,image)
+              
+        #   self.floodfill(x,y+n,n,oldcolor,pic,image)
+             
+
+        #else:
+        #    return
         points=[x,y]      
-        item=self.canvas.find_enclosed(0,0,1300,700)[-1]
+        item=self.canvas.find_enclosed(0,0,1300,700)
         item_2=self.canvas.find_closest(x,y)
         prev_color=StringVar()
         prev_color.set("white")
@@ -428,13 +446,13 @@ class Tools:
             self.canvas.itemconfig(item,fill=self.clshow["bg"])
         if item==item_2:
             newcolor=self.canvas.itemcget(item,"fill")
-            if oldcolor != newcolor:
+            if target_color != newcolor:
                 return
             self.canvas.itemconfig(item,fill=self.clshow["bg"])
             prev_color.set(self.clshow["bg"])
             if item!=item_2:
                 newcolor=self.canvas.itemcget(item_2,"fill")
-                if oldcolor != newcolor:
+                if target_color != newcolor:
                    return
                 self.canvas.itemconfig(item_2,fill=self.clshow["bg"])
                 if self.canvas.itemcget(item,"fill")=="":
@@ -449,9 +467,9 @@ class Tools:
                 return
 
         elif item!=item_2:
-            oldcolor=self.canvas.itemcget(item_2,"fill")
+            
             newcolor=self.canvas.itemcget(item_2,"fill")
-            if oldcolor != newcolor:
+            if target_color != newcolor:
                 return
             self.canvas.itemconfig(item_2,fill=self.clshow["bg"])
             if self.canvas.itemcget(item,"fill")=="":
@@ -459,18 +477,29 @@ class Tools:
             else:
                 return
 
-            self.floodfill(x,y-n,n,oldcolor)
-            self.floodfill(x,y+n,n,oldcolor)
-            self.floodfill(x+n,y,n,oldcolor)
-            self.floodfill(x-n,y,n,oldcolor)
+            self.floodfill(x,y-n,n,oldcolor,pic,image,target_color)
+            self.floodfill(x,y+n,n,oldcolor,pic,image,target_color)
+            self.floodfill(x+n,y,n,oldcolor,pic,image,target_color)
+            self.floodfill(x-n,y,n,oldcolor,pic,image,target_color)
 
     def paintbucket(self,event):
-        if self.prev_x == None or self.prev_y == None:
-            self.prev_x,self.prev_y=event.x,event.y
+        #x=self.canvas.winfo_rootx()+100
+        #y=self.canvas.winfo_rooty()+101
+        #fileloc="D:\\ms paint\ms paint\pics\canvas.PNG"
 
-        oldcolor=self.canvas.itemcget(self.canvas.find_closest(self.prev_x,self.prev_y),"fill")
-        self.floodfill(self.prev_x,self.prev_y,1,oldcolor)
+        #self.image=ImageGrab.grab(bbox=(x,y,x+1300,y+690))
+        #self.image.save(fileloc)
 
+        #self.img=Image.open(fileloc)
+
+        #self.tkimg=ImageTk.PhotoImage(self.img)
+
+        #pic=self.canvas.create_image(0,0,anchor=NW,image=self.tkimg)
+        oldcolor=self.canvas.itemcget(self.canvas.find_closest(event.x,event.y),"fill")
+        #c=self.img.getpixel((event.x,event.y))
+        #if c!=(0,0,0):
+        self.floodfill(event.x,event.y,1,"#ffffff",1,1,oldcolor)
+                       
     def ispaintbucketbuttonpressed(self):
         self.canvas["cursor"]="spraycan"
         self.canvas.unbind("<B1-Motion>")     
@@ -493,6 +522,10 @@ class Shapes:
         
         self.shapeid=None
         
+        self.end_x,self.end_y=0,0
+       
+        self.obj=None
+
     def straightline(self,event):
         if self.shapeid is not None:
             self.canvas.delete(self.shapeid)
@@ -799,7 +832,7 @@ class Shapes:
         self.canvas.bind("<B1-Motion>",self.righttriangle)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
         
-    def selectarea(self,event):
+    def selection_area(self,event):
         if self.shapeid is not None:
             self.canvas.delete(self.shapeid)
         if self.prev_x==None or self.prev_y==None:
@@ -807,13 +840,38 @@ class Shapes:
             return
 
         self.shapeid=self.canvas.create_rectangle(self.prev_x,self.prev_y,event.x,event.y,outline="black",width="1")
-        self.wall=self.shapeid
-                  
-    def move(self,event):
-        selectedarea=[self.prev_x,self.prev_y,self.canvas.winfo_pointerx,self.canvas.winfo_pointery]
+        
+        self.flag=False
+    def startselecting(self,event):
+        if self.prev_x == None or self.prev_y==None:
+            self.prev_x,self.prev_y=event.x,event.y
 
-        self.canvas.find_overlapping(selectedarea)
+        item=[]
+        self.selected_item=self.canvas.find_closest(self.prev_x,self.prev_y)
+        item=self.canvas.coords(self.selected_item)
+        self.obj=self.canvas.find_enclosed(item[0],item[1],item[2],item[3])
+ 
+        if self.flag==False:
+            self.canvas.create_rectangle(item[0],item[1],item[2],item[3],width="1",fill=self.paintobjs.clshow_1["bg"],outline=self.paintobjs.clshow_1["bg"])
+            self.flag=True
+        else:
+            return
+        
+    def endselecting(self,event):
+        self.end_x,self.end_y=None,None
+        self.prev_x,self.prev_y=None,None
+        self.selected_item=None
 
+    def moveselectedarea(self,event):
+        if self.selected_item is not None:
+            x=event.x-self.prev_x
+            y=event.y-self.prev_y
+
+            self.prev_x=self.prev_x+x
+            self.prev_y=self.prev_y+y
+            
+            self.canvas.move(self.selected_item,x,y)
+            self.canvas.move(self.obj,x,y)
 
     def isselectbuttonpressed(self):
         self.canvas["cursor"]="tcross"
@@ -822,7 +880,7 @@ class Shapes:
         self.canvas.unbind("<Button-1>")
         self.canvas.unbind("<Button-3>")
 
-        self.canvas.bind("<B1-Motion>",self.selectarea)
+        self.canvas.bind("<B1-Motion>",self.selection_area)
         self.canvas.bind("<ButtonRelease-1>",self.shapeend)
 
     def ismovement(self):
@@ -832,8 +890,9 @@ class Shapes:
         self.canvas.unbind("<Button-3>")
 
 
-        self.canvas.bind("<Button-1>",self.move)
-        self.canvas.bind("<ButtonRelease-1>",self.shapeend)
+        self.canvas.bind("<Button-1>", self.startselecting)
+        self.canvas.bind("<B1-Motion>", self.moveselectedarea)
+        self.canvas.bind("<ButtonRelease-1>", self.endselecting)
 
     def shapeend(self,event):
         self.prev_x,self.prev_y=None,None
